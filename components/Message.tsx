@@ -1,5 +1,6 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, TextInput, View } from 'react-native';
 import { IMessage } from '../index.d';
+import {useSpeech} from '../hooks/useSpeech';
 
 interface IMessageProps {
   message: IMessage;
@@ -7,13 +8,19 @@ interface IMessageProps {
 
 export function Message({ message }: IMessageProps) {
   
-  const panelStyle = (message.user.toLowerCase() === "ai") ? styles.remoteMessage : styles.localMessage;
-  const textStyle = (message.user.toLowerCase() === "ai") ? styles.whiteText : styles.blackText;
+  const { speak } = useSpeech();
+
+  const onPress = () => {
+    speak(message.text.replace('-', ' '));
+  };
+
+  const panelStyle = (message.user.toLowerCase() === "ai") ? styles.localMessage : styles.remoteMessage;
+  const textStyle = (message.user.toLowerCase() === "ai") ? styles.blackText : styles.whiteText;
   
   return (
-    <View style={[styles.message, panelStyle]}>
+    <TouchableOpacity style={[styles.message, panelStyle]} onPress={onPress}>
       <Text style={textStyle}>{message.text}</Text>
-    </View>
+    </TouchableOpacity>
   );
 }
 

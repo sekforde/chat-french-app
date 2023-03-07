@@ -8,6 +8,7 @@ interface IMessagePanelProps {
 }
 
 export function MessagePanel({ messages }: IMessagePanelProps) {
+
   let flatList:any = useRef(null);
 
   useEffect(() => {

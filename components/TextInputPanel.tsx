@@ -17,7 +17,12 @@ export function TextInputPanel({ sendMessage }: ITextInputPanelProps) {
   return (
     <View style={styles.textPanel}>
       <View style={styles.inputPanel}>
-        <TextInput style={styles.textPanelInput} multiline onChangeText={setMessageText} value={messageText}></TextInput>
+        <TextInput 
+          style={styles.textPanelInput} 
+          multiline={false}
+          onChangeText={setMessageText} 
+          onSubmitEditing={onPress}
+          value={messageText}></TextInput>
       </View>
       <View style={styles.buttonPanel}>
         <TouchableHighlight style={styles.sendButton} onPress={onPress}>
