@@ -5,6 +5,14 @@ import { MessagePanel } from '../components/MessagePanel';
 import { TextInputPanel } from '../components/TextInputPanel';
 import { IMessage } from '..';
 import { _messages } from '../data/messages';
+import {
+  SafeAreaView,
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+  initialWindowMetrics,
+} from 'react-native-safe-area-context';
+
 
 interface IChatScreenParams {
   route: any;
@@ -47,7 +55,8 @@ export function ChatScreen({route, navigation }: IChatScreenParams) {
   }
 
   return (
-    <KeyboardAvoidingView style={styles.outer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    // <KeyboardAvoidingView style={styles.outer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <KeyboardAvoidingView style={styles.outer} behavior={'padding'} keyboardVerticalOffset={100}>
       <MessagePanel messages={messages}/>
       <TextInputPanel sendMessage={sendMessage}/>
     </KeyboardAvoidingView>
