@@ -1,8 +1,9 @@
-import Config from "react-native-config";
+import '../index.d';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import { Audio } from 'expo-av';
 import { randomString } from './randomString';
+import { GOOGLE_API_KEY } from "@env"
 
 export const useSpeech = () => {
 
@@ -21,10 +22,8 @@ export const useSpeech = () => {
   });
 
   const speak = async (text: string) => {
-    //  const key = Platform.OS === 'ios' ? Config.KEY_IOS : Config.KEY_ANDROID
-    // const key = Config.GOOGLE_API_KEY;
+    const key = GOOGLE_API_KEY;
     const sound = new Audio.Sound();
-    const key = 'AIzaSyD5JRjABydT9lH1N_rPtV0TqibJ-ocQeUM';
     const address: string = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${key}`
     const body: any = createBody(text)
     console.log(`I am going to speak ${text}`);
