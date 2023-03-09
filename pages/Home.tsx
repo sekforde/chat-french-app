@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Button, StyleSheet, View } from "react-native";
-import axios from 'axios';
+// import axios from 'axios';
+import { Api } from '../hooks/Api';
+
+const api = new Api();
 
 interface IHomeScreenParams {
   navigation: any;
@@ -18,8 +21,8 @@ export function HomeScreen({ navigation }: IHomeScreenParams) {
 
   const loadPersonas = async () => {
     try {
-      const response  = await axios.get("https://chat-french.herokuapp.com/personas")
-      setPersonas(response.data.data);
+      const personas = await api.getPersonas()
+      setPersonas([...personas.data]);
     } catch (ex) {
       console.error(ex);
     }
@@ -35,8 +38,13 @@ export function HomeScreen({ navigation }: IHomeScreenParams) {
     });
   };
 
+  const onTalkPress = () => {
+    navigation.navigate("Talk");
+  };
+
   return (
     <View style={styles.homeView}>
+      <Button title="Talk To Me!" onPress={() => onTalkPress()}></Button>
       {personas.map((p,i) => {
         return <Button key={i} title={p.name} onPress={() => onPress(p.name)}></Button>
       })}

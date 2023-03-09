@@ -1,18 +1,11 @@
 import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet,Text, View } from 'react-native';
-import axios from 'axios';
 import { MessagePanel } from '../components/MessagePanel';
 import { TextInputPanel } from '../components/TextInputPanel';
 import { IMessage } from '..';
-import { _messages } from '../data/messages';
-import {
-  SafeAreaView,
-  SafeAreaProvider,
-  SafeAreaInsetsContext,
-  useSafeAreaInsets,
-  initialWindowMetrics,
-} from 'react-native-safe-area-context';
+import { Api } from '../hooks/Api';
 
+const api = new Api();
 
 interface IChatScreenParams {
   route: any;
@@ -21,41 +14,39 @@ interface IChatScreenParams {
 
 export function ChatScreen({route, navigation }: IChatScreenParams) {
   const { persona } = route.params
-  console.log('persona', persona);
 
   const [messages, setMessages] = useState<IMessage[]>([]);
 
   const loadMessages = async () => {
-    const response = await axios.post(`https://chat-french.herokuapp.com/thread/${persona}`, {}).catch(console.log);;
-    if (!response?.data) return;
-    setMessages([...response.data.thread.messages]);
+    const messages = await api.loadMessages(persona).catch(console.log);;
+    if (!messages) return;
+    const _messages = messages.filter(m => m.role === 'user' || m.role== 'assistant');
+    setMessages([..._messages]);
   }
 
-  const sendMessageToApi = async (humanMessage:IMessage) => {
-    const response = await axios.post("https://chat-french.herokuapp.com/send", {message:humanMessage.text}).catch(console.log);
-    if (!response?.data) return;
-    setMessages([...messages,humanMessage, response.data.message]);
+  const sendMessageToApi = async (userMessage:IMessage) => {
+    const response = await api.sendMessage(userMessage.content).catch(console.log);;
+    if (!response) return;
+    setMessages([...messages,userMessage, response.message]);
   }
 
   useEffect(() => {
-    // initial load of messages
     loadMessages().catch(console.log);
   }, []);
 
-  const sendMessage = (text: string) => {
-    const humanMessage = {
+  const sendMessage = (content: string) => {
+    const userMessage = {
       date: new Date(),
       sequence: messages.length,
-      user: "Human",
-      text
+      role: "user",
+      content
     };
-    console.log('sendMessage', humanMessage);
-    setMessages([...messages, humanMessage]);
-    sendMessageToApi(humanMessage)
+    console.log('sendMessage', userMessage);
+    setMessages([...messages, userMessage]);
+    sendMessageToApi(userMessage)
   }
 
   return (
-    // <KeyboardAvoidingView style={styles.outer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <KeyboardAvoidingView style={styles.outer} behavior={'padding'} keyboardVerticalOffset={100}>
       <MessagePanel messages={messages}/>
       <TextInputPanel sendMessage={sendMessage}/>
